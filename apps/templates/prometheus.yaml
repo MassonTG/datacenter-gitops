@@ -16,6 +16,25 @@ spec:
           service:
             type: NodePort
             nodePort: 30030
+        alertmanager:
+          config:
+            route:
+              receiver: telegram
+              group_wait: 10s
+              group_interval: 5m
+              repeat_interval: 1h
+            receivers:
+              - name: telegram
+                telegram_configs:
+                  - bot_token: "8690032158:AAGNtr5zuPJKJQAtqeQq10A_GHZyxkLrlrk"
+                    chat_id: 8509877472
+                    parse_mode: HTML
+                    message: |
+                      <b>{{ "{{ .Status }}" }}</b>
+                      {{ "{{ range .Alerts }}" }}
+                      <b>{{ "{{ .Labels.alertname }}" }}</b>
+                      {{ "{{ .Annotations.summary }}" }}
+                      {{ "{{ end }}" }}
   destination:
     server: {{ .Values.spec.destination.server }}
     namespace: monitoring
