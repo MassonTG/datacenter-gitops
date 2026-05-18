@@ -10,27 +10,37 @@ spec:
     chart: kube-prometheus-stack
     targetRevision: "*"
     helm:
-      valueFiles: []
       values: |
         grafana:
           service:
             type: NodePort
             nodePort: 30030
         alertmanager:
+          alertmanagerSpec:
+            alertmanagerConfiguration:
+              global: {}
           config:
+            global:
+              resolve_timeout: 5m
             route:
               receiver: telegram
+              group_by: ['alertname', 'namespace']
               group_wait: 10s
               group_interval: 5m
               repeat_interval: 1h
+              routes:
+                - receiver: "null"
+                  matchers:
+                    - alertname = "Watchdog"
             receivers:
+              - name: "null"
               - name: telegram
                 telegram_configs:
                   - bot_token: "8690032158:AAGNtr5zuPJKJQAtqeQq10A_GHZyxkLrlrk"
                     chat_id: 8509877472
                     parse_mode: HTML
                     message: |
-                      <b>{{ "{{ .Status }}" }}</b>
+                      🚨 <b>{{ "{{ .Status | toUpper }}" }}</b>
                       {{ "{{ range .Alerts }}" }}
                       <b>{{ "{{ .Labels.alertname }}" }}</b>
                       {{ "{{ .Annotations.summary }}" }}
