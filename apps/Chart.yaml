@@ -1,0 +1,4 @@
+apiVersion: v2
+name: datacenter-apps
+description: App of Apps for datacenter cluster
+version: 1.0.0

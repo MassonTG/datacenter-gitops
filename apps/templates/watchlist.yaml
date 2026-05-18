@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: watchlist-dev
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/bog-watchlist/bog-watchlist-helm
+    targetRevision: HEAD
+    path: watchlist
+    helm:
+      valueFiles:
+        - envs/dev/values.yaml
+  destination:
+    server: {{ .Values.spec.destination.server }}
+    namespace: watchlist-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
