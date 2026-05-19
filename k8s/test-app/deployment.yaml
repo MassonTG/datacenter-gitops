@@ -24,7 +24,7 @@ spec:
       serviceAccountName: test-app
       containers:
         - name: test-app
-          image: massontg/test-app:latest
+          image: massontg/test-app:20260519103954
           ports:
             - containerPort: 5000
 ---
