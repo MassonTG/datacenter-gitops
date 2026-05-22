@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: securescan
+  namespace: securescan
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: securescan
+  template:
+    metadata:
+      labels:
+        app: securescan
+    spec:
+      containers:
+        - name: securescan
+          image: massontg/securescan:latest
+          ports:
+            - containerPort: 8000
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: securescan
+  namespace: securescan
+spec:
+  type: NodePort
+  selector:
+    app: securescan
+  ports:
+    - port: 8000
+      targetPort: 8000
+      nodePort: 30085
